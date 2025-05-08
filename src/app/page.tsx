@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -57,9 +56,9 @@ export default function SeekersLensPage() {
 
   const handleInteractiveTermClick = (term: string) => {
     setUserInput(term);
-    // Optionally, switch to the "Analyze & Generate" tab or trigger analysis
-    // For now, just populating the input.
-    // Consider finding the Tabs component and programmatically changing its value
+    // Consider finding the Tabs component and programmatically changing its value to 'analyze'
+    // For now, just populating the input for QueryInputForm.
+    // If tabs are implemented, ensure this interaction switches to the "Analyze & Generate" tab.
   };
 
 
@@ -118,14 +117,15 @@ export default function SeekersLensPage() {
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={80} minSize={30} className="p-1">
             <ResizablePanelGroup direction="vertical" className="h-full">
-              <ResizablePanel defaultSize={60} minSize={30} className="p-1">
-                <Card className="flex flex-col shadow-md h-full">
+              <ResizablePanel defaultSize={60} minSize={30} className="p-1"> {/* Panel for AI Tools */}
+                <Card className="flex flex-col shadow-md h-full"> {/* Card fills this panel */}
                   <CardHeader className="pb-2">
                     <CardTitle className="text-xl flex items-center"><PackageSearch className="mr-2 h-5 w-5 text-primary" />AI-Powered Query Tools</CardTitle>
                     <CardDescription>Leverage AI to enhance your OSINT capabilities.</CardDescription>
                   </CardHeader>
-                  <CardContent className="p-4 pt-2 flex-grow flex flex-col">
-                    <Tabs defaultValue="analyze" className="flex flex-col flex-grow">
+                  {/* CardContent now directly contains Tabs, allowing Tabs to manage height and scrolling */}
+                  <CardContent className="p-4 pt-2 flex-grow flex flex-col overflow-hidden">
+                    <Tabs defaultValue="analyze" className="flex flex-col flex-grow h-full"> {/* Tabs fills CardContent */}
                       <TabsList className="grid w-full grid-cols-3 mb-2">
                         <TabsTrigger value="analyze" className="flex items-center gap-2">
                           <PackageSearch className="h-4 w-4" /> Analyze &amp; Generate
@@ -138,6 +138,7 @@ export default function SeekersLensPage() {
                         </TabsTrigger>
                       </TabsList>
                       
+                      {/* Each TabsContent will grow and scroll internally if needed */}
                       <TabsContent value="analyze" className="mt-2 flex-grow overflow-y-auto p-1">
                          <div className="space-y-6">
                             <QueryInputForm
@@ -149,7 +150,7 @@ export default function SeekersLensPage() {
                                 setIsLoading={setIsLoadingAnalysis}
                               />
                               {analysisResult && (
-                                <Card className="shadow-inner">
+                                <Card className="shadow-inner mt-4"> {/* Added mt-4 for spacing */}
                                   <CardHeader className="py-3">
                                     <CardTitle className="text-md">Analysis Insights</CardTitle>
                                   </CardHeader>
@@ -196,11 +197,11 @@ export default function SeekersLensPage() {
                 </Card>
               </ResizablePanel>
               <ResizableHandle withHandle />
-              <ResizablePanel defaultSize={40} minSize={20} className="p-1">
+              <ResizablePanel defaultSize={40} minSize={20} className="p-1"> {/* Panel for Generated Queries */}
                 <GeneratedQueriesDisplay
                   queriesData={optimizedQueries}
                   isLoading={isLoadingAnalysis}
-                  className="h-full"
+                  className="h-full" 
                 />
               </ResizablePanel>
             </ResizablePanelGroup>
