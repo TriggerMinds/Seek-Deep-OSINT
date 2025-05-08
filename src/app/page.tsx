@@ -119,13 +119,13 @@ export default function SeekersLensPage() {
           <ResizablePanel defaultSize={80} minSize={30} className="p-1">
             <ResizablePanelGroup direction="vertical" className="h-full">
               <ResizablePanel defaultSize={60} minSize={30} className="p-1">
-                <Card className="flex flex-col shadow-md"> {/* Removed h-full */}
+                <Card className="flex flex-col shadow-md h-full">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-xl flex items-center"><PackageSearch className="mr-2 h-5 w-5 text-primary" />AI-Powered Query Tools</CardTitle>
                     <CardDescription>Leverage AI to enhance your OSINT capabilities.</CardDescription>
                   </CardHeader>
-                  <CardContent className="p-4 pt-2"> {/* Removed flex-grow and overflow-hidden */}
-                    <Tabs defaultValue="analyze" className="flex flex-col"> {/* Removed h-full */}
+                  <CardContent className="p-4 pt-2 flex-grow flex flex-col">
+                    <Tabs defaultValue="analyze" className="flex flex-col flex-grow">
                       <TabsList className="grid w-full grid-cols-3 mb-2">
                         <TabsTrigger value="analyze" className="flex items-center gap-2">
                           <PackageSearch className="h-4 w-4" /> Analyze &amp; Generate
@@ -138,55 +138,57 @@ export default function SeekersLensPage() {
                         </TabsTrigger>
                       </TabsList>
                       
-                      <TabsContent value="analyze" className="mt-2 space-y-6"> {/* Removed flex-grow and overflow-auto */}
-                         <QueryInputForm
-                            value={userInput}
-                            onValueChange={setUserInput}
-                            onAnalysisComplete={handleAnalysisComplete}
-                            onAnalysisError={handleAnalysisError}
-                            isLoading={isLoadingAnalysis}
-                            setIsLoading={setIsLoadingAnalysis}
-                          />
-                          {analysisResult && (
-                            <Card className="shadow-inner">
-                              <CardHeader className="py-3">
-                                <CardTitle className="text-md">Analysis Insights</CardTitle>
-                              </CardHeader>
-                              <CardContent className="space-y-3 text-sm pt-0 pb-4">
-                                {analysisResult.entities?.length > 0 && (
-                                  <div><strong>Entities:</strong> <span className="flex flex-wrap gap-1 mt-1">{analysisResult.entities.map(e => (
-                                    <Button key={e} variant="secondary" size="sm" className="h-auto px-2 py-0.5 text-xs" onClick={() => handleInteractiveTermClick(e)}>
-                                      {e}
-                                    </Button>
-                                  ))}</span></div>
-                                )}
-                                {analysisResult.concepts?.length > 0 && (
-                                  <div><strong>Concepts:</strong> <span className="flex flex-wrap gap-1 mt-1">{analysisResult.concepts.map(c => (
-                                    <Button key={c} variant="secondary" size="sm" className="h-auto px-2 py-0.5 text-xs" onClick={() => handleInteractiveTermClick(c)}>
-                                      {c}
-                                    </Button>
-                                  ))}</span></div>
-                                )}
-                                {analysisResult.informationNeeds && (
-                                  <div><strong>Information Needs:</strong> <p className="text-muted-foreground italic mt-1">{analysisResult.informationNeeds}</p></div>
-                                )}
-                                {analysisResult.querySuggestions?.length > 0 && (
-                                  <div><strong>Suggested Base Queries:</strong> <div className="space-y-1 mt-1">{analysisResult.querySuggestions.map(qs => (
-                                    <Button key={qs} variant="link" className="font-mono text-xs p-1 h-auto block text-left text-primary hover:underline" onClick={() => handleInteractiveTermClick(qs)}>
-                                      {qs}
-                                    </Button>
-                                  ))}</div></div>
-                                )}
-                              </CardContent>
-                            </Card>
-                          )}
+                      <TabsContent value="analyze" className="mt-2 flex-grow overflow-y-auto p-1">
+                         <div className="space-y-6">
+                            <QueryInputForm
+                                value={userInput}
+                                onValueChange={setUserInput}
+                                onAnalysisComplete={handleAnalysisComplete}
+                                onAnalysisError={handleAnalysisError}
+                                isLoading={isLoadingAnalysis}
+                                setIsLoading={setIsLoadingAnalysis}
+                              />
+                              {analysisResult && (
+                                <Card className="shadow-inner">
+                                  <CardHeader className="py-3">
+                                    <CardTitle className="text-md">Analysis Insights</CardTitle>
+                                  </CardHeader>
+                                  <CardContent className="space-y-3 text-sm pt-0 pb-4">
+                                    {analysisResult.entities?.length > 0 && (
+                                      <div><strong>Entities:</strong> <span className="flex flex-wrap gap-1 mt-1">{analysisResult.entities.map(e => (
+                                        <Button key={e} variant="secondary" size="sm" className="h-auto px-2 py-0.5 text-xs" onClick={() => handleInteractiveTermClick(e)}>
+                                          {e}
+                                        </Button>
+                                      ))}</span></div>
+                                    )}
+                                    {analysisResult.concepts?.length > 0 && (
+                                      <div><strong>Concepts:</strong> <span className="flex flex-wrap gap-1 mt-1">{analysisResult.concepts.map(c => (
+                                        <Button key={c} variant="secondary" size="sm" className="h-auto px-2 py-0.5 text-xs" onClick={() => handleInteractiveTermClick(c)}>
+                                          {c}
+                                        </Button>
+                                      ))}</span></div>
+                                    )}
+                                    {analysisResult.informationNeeds && (
+                                      <div><strong>Information Needs:</strong> <p className="text-muted-foreground italic mt-1">{analysisResult.informationNeeds}</p></div>
+                                    )}
+                                    {analysisResult.querySuggestions?.length > 0 && (
+                                      <div><strong>Suggested Base Queries:</strong> <div className="space-y-1 mt-1">{analysisResult.querySuggestions.map(qs => (
+                                        <Button key={qs} variant="link" className="font-mono text-xs p-1 h-auto block text-left text-primary hover:underline" onClick={() => handleInteractiveTermClick(qs)}>
+                                          {qs}
+                                        </Button>
+                                      ))}</div></div>
+                                    )}
+                                  </CardContent>
+                                </Card>
+                              )}
+                         </div>
                       </TabsContent>
 
-                      <TabsContent value="expand" className="mt-2"> {/* Removed flex-grow and overflow-auto */}
+                      <TabsContent value="expand" className="mt-2 flex-grow overflow-y-auto p-1">
                         <HorizonExpansionForm onTermClick={handleInteractiveTermClick} />
                       </TabsContent>
 
-                      <TabsContent value="strategic" className="mt-2"> {/* Removed flex-grow and overflow-auto */}
+                      <TabsContent value="strategic" className="mt-2 flex-grow overflow-y-auto p-1">
                          <StrategicModulesForm />
                       </TabsContent>
                     </Tabs>
@@ -208,3 +210,4 @@ export default function SeekersLensPage() {
     </div>
   );
 }
+
