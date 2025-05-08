@@ -1,3 +1,4 @@
+
 "use client";
 
 import type * as React from 'react';
@@ -14,10 +15,10 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 
 interface HorizonExpansionFormProps {
-  // This component will manage its own state for now to simplify page.tsx
+  onTermClick?: (term: string) => void; // Optional: For interactivity with other components
 }
 
-export function HorizonExpansionForm({}: HorizonExpansionFormProps) {
+export function HorizonExpansionForm({ onTermClick }: HorizonExpansionFormProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<SuggestRelatedTermsOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,9 +40,22 @@ export function HorizonExpansionForm({}: HorizonExpansionFormProps) {
       setResults(data);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
-      setError(errorMessage);
+      let friendlyMessage = "An unexpected error occurred while suggesting terms. Please try again.";
+       if (errorMessage.includes("Failed to fetch") || errorMessage.includes("network")) {
+        friendlyMessage = "Could not suggest terms due to a network issue. Please check your connection.";
+      }
+      setError(friendlyMessage);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleBadgeClick = (term: string) => {
+    if (onTermClick) {
+      onTermClick(term);
+    } else {
+      // Fallback: if no onTermClick is provided, update local search term
+      setSearchTerm(term);
     }
   };
 
@@ -54,9 +68,9 @@ export function HorizonExpansionForm({}: HorizonExpansionFormProps) {
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="searchTerm">Initial Search Term</Label>
+            <Label htmlFor="horizonSearchTerm">Initial Search Term</Label>
             <Input
-              id="searchTerm"
+              id="horizonSearchTerm"
               placeholder="e.g., 'dark patterns social media'"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -72,7 +86,7 @@ export function HorizonExpansionForm({}: HorizonExpansionFormProps) {
           )}
         </CardContent>
         <CardFooter>
-          <Button type="submit" disabled={isLoading} className="w-full">
+          <Button type="submit" disabled={isLoading || !searchTerm.trim()} className="w-full">
             {isLoading ? <Loader className="mr-2" /> : null}
             Suggest Terms & Strategies
           </Button>
@@ -86,7 +100,15 @@ export function HorizonExpansionForm({}: HorizonExpansionFormProps) {
                 <h4 className="font-semibold mb-2 text-sm">Related Terms:</h4>
                 <div className="flex flex-wrap gap-2">
                   {results.relatedTerms.map((term, index) => (
-                    <Badge key={`term-${index}`} variant="secondary">{term}</Badge>
+                     <Button 
+                        key={`term-${index}`} 
+                        variant="secondary" 
+                        size="sm" 
+                        className="h-auto px-2 py-0.5 text-xs"
+                        onClick={() => handleBadgeClick(term)}
+                      >
+                        {term}
+                      </Button>
                   ))}
                 </div>
               </div>
@@ -96,6 +118,8 @@ export function HorizonExpansionForm({}: HorizonExpansionFormProps) {
                 <h4 className="font-semibold mb-2 text-sm">Alternative Strategies:</h4>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
                   {results.alternativeStrategies.map((strategy, index) => (
+                    // Making strategies clickable could be a future enhancement
+                    // For now, they are just displayed.
                     <li key={`strategy-${index}`}>{strategy}</li>
                   ))}
                 </ul>
@@ -110,3 +134,5 @@ export function HorizonExpansionForm({}: HorizonExpansionFormProps) {
     </Card>
   );
 }
+
+    

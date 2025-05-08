@@ -1,3 +1,4 @@
+
 "use client";
 
 import type * as React from 'react';
@@ -12,11 +13,9 @@ import { Terminal, Target } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { StrategicQueryOutput } from '@/ai/flows/strategic-query-modules';
 import { QueryDisplayCard } from './query-display-card';
+import { cn } from '@/lib/utils'; // Import cn if QueryDisplayCard uses it directly or indirectly
 
-interface StrategicModulesFormProps {
-  // This component will manage its own state for now
-}
-
+// Consider moving to a constants file if it grows or is used elsewhere
 const OSINT_OBJECTIVES = [
   "Digital Footprint Mapping",
   "Vulnerability Probing (Ethical Dorking)",
@@ -27,7 +26,7 @@ const OSINT_OBJECTIVES = [
   "Reputation Monitoring",
 ];
 
-export function StrategicModulesForm({}: StrategicModulesFormProps) {
+export function StrategicModulesForm() {
   const [objective, setObjective] = useState<string>("");
   const [context, setContext] = useState<string>("");
   const [results, setResults] = useState<StrategicQueryOutput | null>(null);
@@ -54,7 +53,13 @@ export function StrategicModulesForm({}: StrategicModulesFormProps) {
       setResults(data);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
-      setError(errorMessage);
+      let friendlyMessage = "An unexpected error occurred while generating strategic queries. Please try again.";
+      if (errorMessage.includes("Failed to fetch") || errorMessage.includes("network")) {
+        friendlyMessage = "Could not generate queries due to a network issue. Please check your connection.";
+      } else if (errorMessage.toLowerCase().includes("input")) { // More generic input error
+         friendlyMessage = "Query generation failed. Please check your objective and context.";
+      }
+      setError(friendlyMessage);
     } finally {
       setIsLoading(false);
     }
@@ -100,7 +105,7 @@ export function StrategicModulesForm({}: StrategicModulesFormProps) {
           )}
         </CardContent>
         <CardFooter>
-          <Button type="submit" disabled={isLoading} className="w-full">
+          <Button type="submit" disabled={isLoading || !objective || !context.trim()} className="w-full">
             {isLoading ? <Loader className="mr-2" /> : null}
             Generate Strategic Queries
           </Button>
@@ -111,10 +116,12 @@ export function StrategicModulesForm({}: StrategicModulesFormProps) {
             <QueryDisplayCard 
                 title="Generated Strategic Queries"
                 queries={results.queries || []}
-                isLoading={isLoading}
+                isLoading={isLoading} // Pass isLoading to QueryDisplayCard if it should show its own loader
             />
         </CardContent>
       )}
     </Card>
   );
 }
+
+    
