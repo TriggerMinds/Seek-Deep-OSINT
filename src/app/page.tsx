@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { PackageSearch, Layers, Archive, Settings, FileText, XCircle } from 'lucide-react';
+import { PackageSearch, Layers, Archive, Settings, FileText, XCircle, Lightbulb, Target } from 'lucide-react';
 import type { CombinedQueryAnalysisResult } from '@/lib/actions/seeker-actions';
 import type { GenerateOptimizedQueriesOutput } from '@/ai/flows/generate-optimized-queries';
 import type { AnalyzeUserInputOutput } from '@/ai/flows/analyze-user-input';
@@ -59,6 +59,7 @@ export default function SeekersLensPage() {
     setUserInput(term);
     // Optionally, switch to the "Analyze & Generate" tab or trigger analysis
     // For now, just populating the input.
+    // Consider finding the Tabs component and programmatically changing its value
   };
 
 
@@ -126,9 +127,15 @@ export default function SeekersLensPage() {
                   <CardContent className="flex-grow p-4 pt-2 overflow-hidden">
                     <Tabs defaultValue="analyze" className="flex flex-col h-full">
                       <TabsList className="grid w-full grid-cols-3 mb-2">
-                        <TabsTrigger value="analyze">Analyze &amp; Generate</TabsTrigger>
-                        <TabsTrigger value="expand">Expand Horizon</TabsTrigger>
-                        <TabsTrigger value="strategic">Strategic Modules</TabsTrigger>
+                        <TabsTrigger value="analyze" className="flex items-center gap-2">
+                          <PackageSearch className="h-4 w-4" /> Analyze &amp; Generate
+                        </TabsTrigger>
+                        <TabsTrigger value="expand" className="flex items-center gap-2">
+                          <Lightbulb className="h-4 w-4" /> Expand Horizon
+                        </TabsTrigger>
+                        <TabsTrigger value="strategic" className="flex items-center gap-2">
+                          <Target className="h-4 w-4" /> Strategic Modules
+                        </TabsTrigger>
                       </TabsList>
                       
                       <TabsContent value="analyze" className="flex-grow mt-2 overflow-auto space-y-6">
@@ -176,15 +183,11 @@ export default function SeekersLensPage() {
                       </TabsContent>
 
                       <TabsContent value="expand" className="flex-grow mt-2 overflow-auto">
-                        <ScrollArea className="h-full pr-2">
-                           <HorizonExpansionForm onTermClick={handleInteractiveTermClick} />
-                        </ScrollArea>
+                        <HorizonExpansionForm onTermClick={handleInteractiveTermClick} />
                       </TabsContent>
 
                       <TabsContent value="strategic" className="flex-grow mt-2 overflow-auto">
-                        <ScrollArea className="h-full pr-2">
-                           <StrategicModulesForm />
-                        </ScrollArea>
+                         <StrategicModulesForm />
                       </TabsContent>
                     </Tabs>
                   </CardContent>
@@ -205,4 +208,3 @@ export default function SeekersLensPage() {
     </div>
   );
 }
-

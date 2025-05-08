@@ -3,11 +3,10 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Copy, Check } from "lucide-react";
-import { useState } from "react"; // Removed useEffect as it's not used
+import { useState } from "react"; 
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils"; // Added cn import
+import { cn } from "@/lib/utils"; 
 
 interface QueryDisplayCardProps {
   title: string;
@@ -40,7 +39,7 @@ export function QueryDisplayCard({ title, description, queries, isLoading, class
           {description && <CardDescription>{description}</CardDescription>}
         </CardHeader>
         <CardContent>
-          <div className="space-y-2 pt-4"> {/* Added pt-4 to align with non-loading state */}
+          <div className="space-y-2 pt-4"> 
             {[...Array(3)].map((_, i) => (
               <div key={i} className="h-8 bg-muted rounded animate-pulse" />
             ))}
@@ -58,7 +57,7 @@ export function QueryDisplayCard({ title, description, queries, isLoading, class
            {description && <CardDescription>{description}</CardDescription>}
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground pt-4">No queries to display.</p> {/* Added pt-4 */}
+          <p className="text-sm text-muted-foreground pt-4">No queries to display.</p>
         </CardContent>
       </Card>
     );
@@ -72,7 +71,6 @@ export function QueryDisplayCard({ title, description, queries, isLoading, class
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[200px] pr-4"> {/* Adjust height as needed */}
           <ul className="space-y-2">
             {queries.map((query, index) => (
               <li key={index} className="flex items-center justify-between p-2 bg-muted/50 dark:bg-muted/60 rounded-md group shadow-sm">
@@ -91,10 +89,7 @@ export function QueryDisplayCard({ title, description, queries, isLoading, class
               </li>
             ))}
           </ul>
-        </ScrollArea>
       </CardContent>
     </Card>
   );
 }
-
-    

@@ -11,7 +11,6 @@ import { Loader } from "@/components/ui/loader";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal, Lightbulb } from "lucide-react";
 import type { SuggestRelatedTermsOutput } from '@/ai/flows/suggest-related-terms';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface HorizonExpansionFormProps {
   onTermClick?: (term: string) => void;
@@ -93,8 +92,7 @@ export function HorizonExpansionForm({ onTermClick }: HorizonExpansionFormProps)
         </CardFooter>
       </form>
       {results && (
-        <CardContent className="mt-4 border-t pt-4">
-          <ScrollArea className="h-[200px] pr-2"> 
+        <CardContent className="mt-4 border-t pt-4"> 
             {results.relatedTerms?.length > 0 && (
               <div className="mb-4">
                 <h4 className="font-semibold mb-2 text-sm">Related Terms:</h4>
@@ -126,7 +124,6 @@ export function HorizonExpansionForm({ onTermClick }: HorizonExpansionFormProps)
              {(!results.relatedTerms || results.relatedTerms.length === 0) && (!results.alternativeStrategies || results.alternativeStrategies.length === 0) && (
                 <p className="text-sm text-muted-foreground">No suggestions found for this term.</p>
              )}
-          </ScrollArea>
         </CardContent>
       )}
     </Card>
