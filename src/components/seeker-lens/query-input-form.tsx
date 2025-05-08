@@ -46,15 +46,8 @@ export function QueryInputForm({
       onAnalysisComplete(results);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
-      let friendlyMessage = "An unexpected error occurred during analysis. Please try again.";
-      if (errorMessage.includes("Failed to fetch") || errorMessage.includes("network")) {
-        friendlyMessage = "Analysis failed due to a network issue. Please check your connection and try again.";
-      } else if (errorMessage.toLowerCase().includes("invalid input")) {
-        friendlyMessage = "Analysis failed due to invalid input. Please check your query and try again.";
-      } else if (errorMessage.toLowerCase().includes("failed to perform intelligent analysis")) {
-         friendlyMessage = "The AI could not process your request. Please try rephrasing your input.";
-      }
-      setError(friendlyMessage);
+      // User-friendly error mapping is handled in the main page component's handleAnalysisError
+      setError(errorMessage); // Set the raw error here, parent component will make it friendly
       onAnalysisError(errorMessage); 
     } finally {
       setIsLoading(false);
@@ -95,18 +88,18 @@ export function QueryInputForm({
               )}
             </div>
           </div>
-          {error && (
+          {error && ( // Display raw error here, parent component's toast will show friendly message
             <Alert variant="destructive">
               <Terminal className="h-4 w-4" />
               <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
+              <AlertDescription>{error}</AlertDescription> 
             </Alert>
           )}
         </CardContent>
         <CardFooter>
           <Button type="submit" disabled={isLoading || !value.trim()} className="w-full">
             {isLoading ? <Loader className="mr-2" /> : null}
-            Analyze & Generate Queries
+            Analyze &amp; Generate Queries
           </Button>
         </CardFooter>
       </form>

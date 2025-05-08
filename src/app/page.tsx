@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { PackageSearch, Layers, Archive, Settings, FileText } from 'lucide-react';
+import { PackageSearch, Layers, Archive, Settings, FileText, XCircle } from 'lucide-react';
 import type { CombinedQueryAnalysisResult } from '@/lib/actions/seeker-actions';
 import type { GenerateOptimizedQueriesOutput } from '@/ai/flows/generate-optimized-queries';
 import type { AnalyzeUserInputOutput } from '@/ai/flows/analyze-user-input';
@@ -43,6 +43,10 @@ export default function SeekersLensPage() {
       friendlyMessage = "Analysis failed due to invalid input. Please check your query and try again.";
     }  else if (errorMsg.toLowerCase().includes("failed to perform intelligent analysis")) {
       friendlyMessage = "The AI could not process your request. Please try rephrasing your input.";
+    } else if (errorMsg.toLowerCase().includes("failed to suggest related terms")) {
+      friendlyMessage = "The AI could not find related terms for your input. Please try a different term.";
+    } else if (errorMsg.toLowerCase().includes("failed to generate strategic queries")) {
+      friendlyMessage = "The AI could not generate strategic queries for your input. Please try adjusting the objective or context.";
     }
     toast({
       title: "Analysis Failed",
@@ -50,6 +54,13 @@ export default function SeekersLensPage() {
       variant: "destructive",
     });
   }
+
+  const handleInteractiveTermClick = (term: string) => {
+    setUserInput(term);
+    // Optionally, switch to the "Analyze & Generate" tab or trigger analysis
+    // For now, just populating the input.
+  };
+
 
   return (
     <div className="flex flex-col h-screen bg-muted/20 dark:bg-muted/40">
@@ -115,7 +126,7 @@ export default function SeekersLensPage() {
                   <CardContent className="flex-grow p-4 pt-2 overflow-hidden">
                     <Tabs defaultValue="analyze" className="flex flex-col h-full">
                       <TabsList className="grid w-full grid-cols-3 mb-2">
-                        <TabsTrigger value="analyze">Analyze & Generate</TabsTrigger>
+                        <TabsTrigger value="analyze">Analyze &amp; Generate</TabsTrigger>
                         <TabsTrigger value="expand">Expand Horizon</TabsTrigger>
                         <TabsTrigger value="strategic">Strategic Modules</TabsTrigger>
                       </TabsList>
@@ -137,14 +148,14 @@ export default function SeekersLensPage() {
                               <CardContent className="space-y-3 text-sm pt-0 pb-4">
                                 {analysisResult.entities?.length > 0 && (
                                   <div><strong>Entities:</strong> <span className="flex flex-wrap gap-1 mt-1">{analysisResult.entities.map(e => (
-                                    <Button key={e} variant="secondary" size="sm" className="h-auto px-2 py-0.5 text-xs" onClick={() => setUserInput(e)}>
+                                    <Button key={e} variant="secondary" size="sm" className="h-auto px-2 py-0.5 text-xs" onClick={() => handleInteractiveTermClick(e)}>
                                       {e}
                                     </Button>
                                   ))}</span></div>
                                 )}
                                 {analysisResult.concepts?.length > 0 && (
                                   <div><strong>Concepts:</strong> <span className="flex flex-wrap gap-1 mt-1">{analysisResult.concepts.map(c => (
-                                    <Button key={c} variant="secondary" size="sm" className="h-auto px-2 py-0.5 text-xs" onClick={() => setUserInput(c)}>
+                                    <Button key={c} variant="secondary" size="sm" className="h-auto px-2 py-0.5 text-xs" onClick={() => handleInteractiveTermClick(c)}>
                                       {c}
                                     </Button>
                                   ))}</span></div>
@@ -154,7 +165,7 @@ export default function SeekersLensPage() {
                                 )}
                                 {analysisResult.querySuggestions?.length > 0 && (
                                   <div><strong>Suggested Base Queries:</strong> <div className="space-y-1 mt-1">{analysisResult.querySuggestions.map(qs => (
-                                    <Button key={qs} variant="link" className="font-mono text-xs p-1 h-auto block text-left text-primary hover:underline" onClick={() => setUserInput(qs)}>
+                                    <Button key={qs} variant="link" className="font-mono text-xs p-1 h-auto block text-left text-primary hover:underline" onClick={() => handleInteractiveTermClick(qs)}>
                                       {qs}
                                     </Button>
                                   ))}</div></div>
@@ -166,7 +177,7 @@ export default function SeekersLensPage() {
 
                       <TabsContent value="expand" className="flex-grow mt-2 overflow-auto">
                         <ScrollArea className="h-full pr-2">
-                           <HorizonExpansionForm onTermClick={setUserInput} />
+                           <HorizonExpansionForm onTermClick={handleInteractiveTermClick} />
                         </ScrollArea>
                       </TabsContent>
 
@@ -194,3 +205,4 @@ export default function SeekersLensPage() {
     </div>
   );
 }
+
