@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { PackageSearch, Layers, Archive, Settings, FileText, XCircle, Lightbulb, Target } from 'lucide-react';
+import { PackageSearch, Layers, Archive, Settings, FileText, Lightbulb, Target } from 'lucide-react';
 import type { CombinedQueryAnalysisResult } from '@/lib/actions/seeker-actions';
 import type { GenerateOptimizedQueriesOutput } from '@/ai/flows/generate-optimized-queries';
 import type { AnalyzeUserInputOutput } from '@/ai/flows/analyze-user-input';
@@ -119,13 +119,13 @@ export default function SeekersLensPage() {
           <ResizablePanel defaultSize={80} minSize={30} className="p-1">
             <ResizablePanelGroup direction="vertical" className="h-full">
               <ResizablePanel defaultSize={60} minSize={30} className="p-1">
-                <Card className="h-full flex flex-col shadow-md">
+                <Card className="flex flex-col shadow-md"> {/* Removed h-full */}
                   <CardHeader className="pb-2">
                     <CardTitle className="text-xl flex items-center"><PackageSearch className="mr-2 h-5 w-5 text-primary" />AI-Powered Query Tools</CardTitle>
                     <CardDescription>Leverage AI to enhance your OSINT capabilities.</CardDescription>
                   </CardHeader>
-                  <CardContent className="flex-grow p-4 pt-2 overflow-hidden">
-                    <Tabs defaultValue="analyze" className="flex flex-col h-full">
+                  <CardContent className="p-4 pt-2"> {/* Removed flex-grow and overflow-hidden */}
+                    <Tabs defaultValue="analyze" className="flex flex-col"> {/* Removed h-full */}
                       <TabsList className="grid w-full grid-cols-3 mb-2">
                         <TabsTrigger value="analyze" className="flex items-center gap-2">
                           <PackageSearch className="h-4 w-4" /> Analyze &amp; Generate
@@ -138,7 +138,7 @@ export default function SeekersLensPage() {
                         </TabsTrigger>
                       </TabsList>
                       
-                      <TabsContent value="analyze" className="flex-grow mt-2 overflow-auto space-y-6">
+                      <TabsContent value="analyze" className="mt-2 space-y-6"> {/* Removed flex-grow and overflow-auto */}
                          <QueryInputForm
                             value={userInput}
                             onValueChange={setUserInput}
@@ -182,11 +182,11 @@ export default function SeekersLensPage() {
                           )}
                       </TabsContent>
 
-                      <TabsContent value="expand" className="flex-grow mt-2 overflow-auto">
+                      <TabsContent value="expand" className="mt-2"> {/* Removed flex-grow and overflow-auto */}
                         <HorizonExpansionForm onTermClick={handleInteractiveTermClick} />
                       </TabsContent>
 
-                      <TabsContent value="strategic" className="flex-grow mt-2 overflow-auto">
+                      <TabsContent value="strategic" className="mt-2"> {/* Removed flex-grow and overflow-auto */}
                          <StrategicModulesForm />
                       </TabsContent>
                     </Tabs>
