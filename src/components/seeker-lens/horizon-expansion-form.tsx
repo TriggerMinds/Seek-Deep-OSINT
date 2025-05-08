@@ -12,10 +12,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal, Lightbulb } from "lucide-react";
 import type { SuggestRelatedTermsOutput } from '@/ai/flows/suggest-related-terms';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
 
 interface HorizonExpansionFormProps {
-  onTermClick?: (term: string) => void; // Optional: For interactivity with other components
+  onTermClick?: (term: string) => void;
 }
 
 export function HorizonExpansionForm({ onTermClick }: HorizonExpansionFormProps) {
@@ -43,6 +42,8 @@ export function HorizonExpansionForm({ onTermClick }: HorizonExpansionFormProps)
       let friendlyMessage = "An unexpected error occurred while suggesting terms. Please try again.";
        if (errorMessage.includes("Failed to fetch") || errorMessage.includes("network")) {
         friendlyMessage = "Could not suggest terms due to a network issue. Please check your connection.";
+      } else if (errorMessage.toLowerCase().includes("failed to suggest related terms")) {
+        friendlyMessage = "The AI could not find related terms for your input. Please try a different term.";
       }
       setError(friendlyMessage);
     } finally {
@@ -53,10 +54,9 @@ export function HorizonExpansionForm({ onTermClick }: HorizonExpansionFormProps)
   const handleBadgeClick = (term: string) => {
     if (onTermClick) {
       onTermClick(term);
-    } else {
-      // Fallback: if no onTermClick is provided, update local search term
-      setSearchTerm(term);
     }
+    // Also update local search term for immediate use in this form if desired
+    setSearchTerm(term); 
   };
 
   return (
@@ -94,7 +94,7 @@ export function HorizonExpansionForm({ onTermClick }: HorizonExpansionFormProps)
       </form>
       {results && (
         <CardContent className="mt-4 border-t pt-4">
-          <ScrollArea className="h-[200px] pr-2"> {/* Adjust height as needed */}
+          <ScrollArea className="h-[200px] pr-2"> 
             {results.relatedTerms?.length > 0 && (
               <div className="mb-4">
                 <h4 className="font-semibold mb-2 text-sm">Related Terms:</h4>
@@ -118,8 +118,6 @@ export function HorizonExpansionForm({ onTermClick }: HorizonExpansionFormProps)
                 <h4 className="font-semibold mb-2 text-sm">Alternative Strategies:</h4>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
                   {results.alternativeStrategies.map((strategy, index) => (
-                    // Making strategies clickable could be a future enhancement
-                    // For now, they are just displayed.
                     <li key={`strategy-${index}`}>{strategy}</li>
                   ))}
                 </ul>
@@ -134,5 +132,3 @@ export function HorizonExpansionForm({ onTermClick }: HorizonExpansionFormProps)
     </Card>
   );
 }
-
-    

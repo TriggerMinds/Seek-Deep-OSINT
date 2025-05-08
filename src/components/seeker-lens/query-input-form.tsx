@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Loader } from "@/components/ui/loader";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal, XCircle } from "lucide-react"; // Added XCircle for clear button
+import { Terminal, XCircle } from "lucide-react";
 import type { CombinedQueryAnalysisResult } from '@/lib/actions/seeker-actions';
 
 interface QueryInputFormProps {
@@ -51,9 +51,11 @@ export function QueryInputForm({
         friendlyMessage = "Analysis failed due to a network issue. Please check your connection and try again.";
       } else if (errorMessage.toLowerCase().includes("invalid input")) {
         friendlyMessage = "Analysis failed due to invalid input. Please check your query and try again.";
+      } else if (errorMessage.toLowerCase().includes("failed to perform intelligent analysis")) {
+         friendlyMessage = "The AI could not process your request. Please try rephrasing your input.";
       }
       setError(friendlyMessage);
-      onAnalysisError(errorMessage); // Propagate original error for central handling if needed
+      onAnalysisError(errorMessage); 
     } finally {
       setIsLoading(false);
     }
@@ -76,10 +78,10 @@ export function QueryInputForm({
                 value={value}
                 onChange={(e) => onValueChange(e.target.value)}
                 rows={5}
-                className="min-h-[100px] font-mono text-sm pr-10" // Added pr-10 for clear button space
+                className="min-h-[100px] font-mono text-sm pr-10" 
                 disabled={isLoading}
               />
-              {value && (
+              {value && !isLoading && (
                 <Button
                   type="button"
                   variant="ghost"
@@ -87,7 +89,6 @@ export function QueryInputForm({
                   className="absolute top-2 right-2 h-7 w-7 text-muted-foreground hover:text-foreground"
                   onClick={() => onValueChange("")}
                   aria-label="Clear input"
-                  disabled={isLoading}
                 >
                   <XCircle className="h-5 w-5" />
                 </Button>
@@ -112,5 +113,3 @@ export function QueryInputForm({
     </Card>
   );
 }
-
-    

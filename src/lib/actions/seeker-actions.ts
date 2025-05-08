@@ -1,3 +1,4 @@
+
 "use server";
 
 import { analyzeUserInput, type AnalyzeUserInputInput, type AnalyzeUserInputOutput } from "@/ai/flows/analyze-user-input";
@@ -14,12 +15,14 @@ export async function performIntelligentAnalysisAndQueryGeneration(
   userInput: string
 ): Promise<CombinedQueryAnalysisResult> {
   try {
+    if (!userInput || userInput.trim() === "") {
+      // More specific error for empty input if desired, or let the flow handle it
+      // For now, this check helps avoid unnecessary API calls with clearly invalid input.
+      throw new Error("Invalid input: User input cannot be empty.");
+    }
     const analysisInput: AnalyzeUserInputInput = { input: userInput };
     const analysisResult = await analyzeUserInput(analysisInput);
 
-    // Use a primary piece of information from analysis for query generation,
-    // e.g., the first query suggestion or combined information needs.
-    // This logic can be refined based on desired behavior.
     const queryForOptimization = analysisResult.querySuggestions?.[0] || analysisResult.informationNeeds || userInput;
     
     const optimizationInput: GenerateOptimizedQueriesInput = { query: queryForOptimization };
@@ -31,8 +34,10 @@ export async function performIntelligentAnalysisAndQueryGeneration(
     };
   } catch (error) {
     console.error("Error in performIntelligentAnalysisAndQueryGeneration:", error);
-    // Consider returning a structured error or re-throwing a custom error
-    throw new Error("Failed to perform intelligent analysis and query generation.");
+    if (error instanceof Error && error.message.toLowerCase().includes("invalid input")) {
+        throw error; // Re-throw specific "invalid input" errors
+    }
+    throw new Error(`Failed to perform intelligent analysis and query generation: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -40,12 +45,18 @@ export async function performSuggestRelatedTerms(
   searchTerm: string
 ): Promise<SuggestRelatedTermsOutput> {
   try {
+    if (!searchTerm || searchTerm.trim() === "") {
+      throw new Error("Invalid input: Search term cannot be empty.");
+    }
     const input: SuggestRelatedTermsInput = { searchTerm };
     const result = await suggestRelatedTerms(input);
     return result;
   } catch (error) {
     console.error("Error in performSuggestRelatedTerms:", error);
-    throw new Error("Failed to suggest related terms.");
+     if (error instanceof Error && error.message.toLowerCase().includes("invalid input")) {
+        throw error;
+    }
+    throw new Error(`Failed to suggest related terms: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -54,11 +65,17 @@ export async function performGenerateStrategicQueries(
   context: string
 ): Promise<StrategicQueryOutput> {
   try {
+    if (!objective || !context || objective.trim() === "" || context.trim() === "") {
+        throw new Error("Invalid input: Objective and context cannot be empty.");
+    }
     const input: StrategicQueryInput = { objective, context };
     const result = await generateStrategicQueries(input);
     return result;
   } catch (error) {
     console.error("Error in performGenerateStrategicQueries:", error);
-    throw new Error("Failed to generate strategic queries.");
+    if (error instanceof Error && error.message.toLowerCase().includes("invalid input")) {
+        throw error;
+    }
+    throw new Error(`Failed to generate strategic queries: ${error instanceof Error ? error.message : String(error)}`);
   }
 }

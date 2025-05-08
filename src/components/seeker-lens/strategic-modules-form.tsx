@@ -13,9 +13,8 @@ import { Terminal, Target } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { StrategicQueryOutput } from '@/ai/flows/strategic-query-modules';
 import { QueryDisplayCard } from './query-display-card';
-import { cn } from '@/lib/utils'; // Import cn if QueryDisplayCard uses it directly or indirectly
+import { cn } from '@/lib/utils'; 
 
-// Consider moving to a constants file if it grows or is used elsewhere
 const OSINT_OBJECTIVES = [
   "Digital Footprint Mapping",
   "Vulnerability Probing (Ethical Dorking)",
@@ -56,8 +55,10 @@ export function StrategicModulesForm() {
       let friendlyMessage = "An unexpected error occurred while generating strategic queries. Please try again.";
       if (errorMessage.includes("Failed to fetch") || errorMessage.includes("network")) {
         friendlyMessage = "Could not generate queries due to a network issue. Please check your connection.";
-      } else if (errorMessage.toLowerCase().includes("input")) { // More generic input error
+      } else if (errorMessage.toLowerCase().includes("input")) { 
          friendlyMessage = "Query generation failed. Please check your objective and context.";
+      } else if (errorMessage.toLowerCase().includes("failed to generate strategic queries")) {
+         friendlyMessage = "The AI could not generate strategic queries for your input. Please try adjusting the objective or context.";
       }
       setError(friendlyMessage);
     } finally {
@@ -116,12 +117,10 @@ export function StrategicModulesForm() {
             <QueryDisplayCard 
                 title="Generated Strategic Queries"
                 queries={results.queries || []}
-                isLoading={isLoading} // Pass isLoading to QueryDisplayCard if it should show its own loader
+                isLoading={isLoading} 
             />
         </CardContent>
       )}
     </Card>
   );
 }
-
-    

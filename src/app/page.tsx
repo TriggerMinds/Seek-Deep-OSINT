@@ -10,19 +10,17 @@ import { StrategicModulesForm } from "@/components/seeker-lens/strategic-modules
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { PackageSearch, Layers, Archive, Settings, FileText, Lightbulb, TargetIcon } from 'lucide-react';
+import { PackageSearch, Layers, Archive, Settings, FileText } from 'lucide-react';
 import type { CombinedQueryAnalysisResult } from '@/lib/actions/seeker-actions';
 import type { GenerateOptimizedQueriesOutput } from '@/ai/flows/generate-optimized-queries';
 import type { AnalyzeUserInputOutput } from '@/ai/flows/analyze-user-input';
-import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Button } from "@/components/ui/button"; // Added missing Button import
+import { Button } from "@/components/ui/button";
 
 export default function SeekersLensPage() {
-  const [userInput, setUserInput] = useState(""); // Lifted state for QueryInputForm
+  const [userInput, setUserInput] = useState("");
   const [analysisResult, setAnalysisResult] = useState<AnalyzeUserInputOutput | null>(null);
   const [optimizedQueries, setOptimizedQueries] = useState<GenerateOptimizedQueriesOutput | null>(null);
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
@@ -43,6 +41,8 @@ export default function SeekersLensPage() {
       friendlyMessage = "Analysis failed due to a network issue. Please check your connection and try again.";
     } else if (errorMsg.toLowerCase().includes("invalid input")) {
       friendlyMessage = "Analysis failed due to invalid input. Please check your query and try again.";
+    }  else if (errorMsg.toLowerCase().includes("failed to perform intelligent analysis")) {
+      friendlyMessage = "The AI could not process your request. Please try rephrasing your input.";
     }
     toast({
       title: "Analysis Failed",
@@ -106,22 +106,22 @@ export default function SeekersLensPage() {
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={80} minSize={30} className="p-1">
             <ResizablePanelGroup direction="vertical" className="h-full">
-              <ResizablePanel defaultSize={60} minSize={30} className="p-1"> {/* Adjusted size */}
+              <ResizablePanel defaultSize={60} minSize={30} className="p-1">
                 <Card className="h-full flex flex-col shadow-md">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-xl flex items-center"><PackageSearch className="mr-2 h-5 w-5 text-primary" />AI-Powered Query Tools</CardTitle>
                     <CardDescription>Leverage AI to enhance your OSINT capabilities.</CardDescription>
                   </CardHeader>
                   <CardContent className="flex-grow p-4 pt-2 overflow-hidden">
-                    <Tabs defaultValue="analyze" className="h-full flex flex-col">
-                      <TabsList className="mb-2">
+                    <Tabs defaultValue="analyze" className="flex flex-col h-full">
+                      <TabsList className="grid w-full grid-cols-3 mb-2">
                         <TabsTrigger value="analyze">Analyze & Generate</TabsTrigger>
                         <TabsTrigger value="expand">Expand Horizon</TabsTrigger>
                         <TabsTrigger value="strategic">Strategic Modules</TabsTrigger>
                       </TabsList>
-                      <ScrollArea className="flex-grow">
-                        <TabsContent value="analyze" className="space-y-6 mt-0">
-                          <QueryInputForm
+                      
+                      <TabsContent value="analyze" className="flex-grow mt-2 overflow-auto space-y-6">
+                         <QueryInputForm
                             value={userInput}
                             onValueChange={setUserInput}
                             onAnalysisComplete={handleAnalysisComplete}
@@ -162,20 +162,25 @@ export default function SeekersLensPage() {
                               </CardContent>
                             </Card>
                           )}
-                        </TabsContent>
-                        <TabsContent value="expand" className="mt-0">
+                      </TabsContent>
+
+                      <TabsContent value="expand" className="flex-grow mt-2 overflow-auto">
+                        <ScrollArea className="h-full pr-2">
                            <HorizonExpansionForm onTermClick={setUserInput} />
-                        </TabsContent>
-                        <TabsContent value="strategic" className="mt-0">
+                        </ScrollArea>
+                      </TabsContent>
+
+                      <TabsContent value="strategic" className="flex-grow mt-2 overflow-auto">
+                        <ScrollArea className="h-full pr-2">
                            <StrategicModulesForm />
-                        </TabsContent>
-                      </ScrollArea>
+                        </ScrollArea>
+                      </TabsContent>
                     </Tabs>
                   </CardContent>
                 </Card>
               </ResizablePanel>
               <ResizableHandle withHandle />
-              <ResizablePanel defaultSize={40} minSize={20} className="p-1"> {/* Adjusted size */}
+              <ResizablePanel defaultSize={40} minSize={20} className="p-1">
                 <GeneratedQueriesDisplay
                   queriesData={optimizedQueries}
                   isLoading={isLoadingAnalysis}
@@ -189,5 +194,3 @@ export default function SeekersLensPage() {
     </div>
   );
 }
-
-    
